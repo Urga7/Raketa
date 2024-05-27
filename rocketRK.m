@@ -1,4 +1,4 @@
-function [max_altitude, airtime, top_speed] = rocket(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, dt, simulation_duration, show_plot = false, realtime = false)
+function [max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, dt, simulation_duration, show_plot = false, realtime = false)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]
@@ -11,7 +11,7 @@ drag_coeficient = 0.2;
 G = 6.67 * 1e-11; % [m^3 / (kg * s^2)]
 earth_mass = 5.97 * 1e24; % [kg]
 earth_radius = 6.37 * 1e6; % [m]
-base_air_density = 1.20; % [kg / m^3] at 20 deg C, sea level.
+base_air_density = 1.20; % [kg / m^3] at 20 deg C, sea level_init.
 
 % INITIAL CONDITIONS:
 time = 0;
@@ -41,6 +41,17 @@ top_speed = 0;
 
 while time < simulation_duration
 
+  k1 = dt*rocket_derivative(time, [pos; vel; fuel]);
+  k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2);
+  k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2);
+  k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3);
+
+  pos = pos + (k1(1:2) + 2*k2(1:2) + 2*k3(1:2) + k4(1:2)) / 6;
+  vel = vel + (k1(3:4) + 2*k2(3:4) + 2*k3(3:4) + k4(3:4)) / 6;
+  fuel = fuel + (k1(5) + 2*k2(5) + 2*k3(5) + k4(5)) / 6;
+
+  vel = [norm(vel) * sin(tilt_speed * time); norm(vel) * cos(tilt_speed * time)];
+
   dist = sqrt(pos(1)^2 + pos(2)^2);
   if dist < earth_radius
      airtime = time;
@@ -50,38 +61,17 @@ while time < simulation_duration
      return;
   end
 
-  if time >= tilt_start_time
-    angle += tilt_speed * dt;
-  end
-
   if dist - earth_radius > max_altitude
     max_altitude = dist - earth_radius;
   endif
-
-  g_size = (G * earth_mass) / dist^2;
-  g_x = -g_size * (pos(1) / dist);
-  g_y = -g_size * (pos(2) / dist);
-  air_density = base_air_density * (1 / exp((dist - earth_radius) / 8200));
-  drag = -(0.5 * air_density * (sqrt(vel(1)^2 + vel(2)^2) * vel) * cross_section_area * drag_coeficient) / (dry_mass + fuel);
-  accel = drag + [g_x; g_y];
-
-  if fuel > 0
-    thrust = fuel_consumption * fuel_ejection_speed * (1 / (dry_mass + fuel));
-    accel += [thrust * sin(angle); thrust * cos(angle)];
-    fuel -= fuel_consumption * dt;
-  end
-
-  vel += accel * dt;
-  vel = [norm(vel) * sin(angle); norm(vel) * cos(angle)];
-  pos += vel * dt;
 
   if norm(vel) > top_speed
     top_speed = norm(vel);
   end
 
   if show_plot
-    set(rocket_plot, 'XData', [pos(1), pos(1) + rocket_length * sin(angle)], ...
-                     'YData', [pos(2), pos(2) + rocket_length * cos(angle)]);
+    set(rocket_plot, 'XData', [pos(1), pos(1) + rocket_length * sin(tilt_speed * time)], ...
+                     'YData', [pos(2), pos(2) + rocket_length * cos(tilt_speed * time)]);
     set(speed_text, 'String', sprintf('Speed: %.2f m/s', norm(vel)));
     drawnow;
   end
