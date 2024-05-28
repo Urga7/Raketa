@@ -46,6 +46,7 @@ while time < simulation_duration
      airtime = time;
      if show_plot
        fprintf('Crashed!\n');
+       set(speed_text, 'String', sprintf('Speed: %.2f m/s', 0));
      end
      return;
   end

@@ -41,21 +41,38 @@ top_speed = 0;
 
 while time < simulation_duration
 
-  k1 = dt*rocket_derivative(time, [pos; vel; fuel]);
-  k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2);
-  k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2);
-  k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3);
+  if fuel > 0 && time >= tilt_start_time
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel], true, true, tilt_speed);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, true, true, tilt_speed);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, true, true, tilt_speed);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, true, true, tilt_speed);
+  end
+  if fuel > 0 && time < tilt_start_time
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel], true);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, true);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, true);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, true);
+  end
+  if fuel <= 0
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel], false);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, false);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, false);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, false);
+  end
 
-  pos = pos + (k1(1:2) + 2*k2(1:2) + 2*k3(1:2) + k4(1:2)) / 6;
-  vel = vel + (k1(3:4) + 2*k2(3:4) + 2*k3(3:4) + k4(3:4)) / 6;
-  fuel = fuel + (k1(5) + 2*k2(5) + 2*k3(5) + k4(5)) / 6;
+  pos += (k1(1:2) + 2*k2(1:2) + 2*k3(1:2) + k4(1:2)) / 6;
+  vel += (k1(3:4) + 2*k2(3:4) + 2*k3(3:4) + k4(3:4)) / 6;
+  fuel += (k1(5) + 2*k2(5) + 2*k3(5) + k4(5)) / 6;
 
-  vel = [norm(vel) * sin(tilt_speed * time); norm(vel) * cos(tilt_speed * time)];
+  if time > tilt_start_time
+    vel = [norm(vel) * sin(tilt_speed * time); norm(vel) * cos(tilt_speed * time)];
+  end
 
-  dist = sqrt(pos(1)^2 + pos(2)^2);
+  dist = norm(pos);
   if dist < earth_radius
      airtime = time;
      if show_plot
+       set(speed_text, 'String', sprintf('Speed: %.2f m/s', 0));
        fprintf('Crashed!\n');
      end
      return;

@@ -1,10 +1,10 @@
 fuel_capacity = 2500; % [kg]
-tilt_start_time = 100; % [s] Time at which the angle of the rocket start changing linearly
+tilt_start_time = 50; % [s] Time at which the angle of the rocket start changing linearly
 tilt_speed = 0.001; % [rad / s]
-initial_angle = 1; % [deg]
-dt = 0.1; % [s] Time step
+initial_angle = 0; % [deg]
+dt = 10; % [s] Time step
 simulation_duration = 10000; % [s]
-show_plot = true;
+show_plot = false;
 real_time = false;
 
 tic;
