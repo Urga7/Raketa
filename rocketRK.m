@@ -85,9 +85,9 @@ while time < simulation_duration
   end
 
   if dist - earth_radius >= iss_height
-    fprintf('Hitrost: %.1f\n', norm(vel));
+    %fprintf('Hitrost: %.1f\n', norm(vel));
     %fprintf('Kot: %.1f\n', (angle * 180) / pi);
-    kot = get_angle(pos, vel, angle);
+    kot = get_angle(pos, angle);
     fprintf('Kot popravljen: %.1f\n', (kot * 180) / pi);
     tilt_speed;
     pos;
