@@ -11,10 +11,10 @@ initial_angle = pi / 2; % [deg]
 initial_position = [0; earth_radius + 408000];
 initial_vel = [7665; 0];
 dt = 1; % [s] Time step
-simulation_duration = 10000; % [s]
+simulation_duration = 100000000; % [s]
 show_plot = true;
 real_time = false;
 
-tic;
-[max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time)
-toc
+%[max_altitude, airtime_RK, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time)
+[max_altitude, airtime_Euler, top_speed] = rocket(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time)
+

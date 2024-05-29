@@ -28,6 +28,7 @@ if show_plot
   axis equal;
   xlim([-2*earth_radius 2*earth_radius]);
   ylim([-3*earth_radius 3*earth_radius]);
+  bg_image = imread('earth.jpg');
   rectangle('Position', [-earth_radius, -earth_radius, 2*earth_radius, 2*earth_radius], 'Curvature', [1, 1], 'FaceColor', [0.8, 0.8, 0.8]);
   rocket_length = 400000;
   rocket_plot = plot([pos(1), pos(1) + rocket_length * sin(angle)], ...
@@ -84,15 +85,21 @@ while time < simulation_duration
      return;
   end
 
-  if dist - earth_radius >= iss_height
+  %if dist - earth_radius >= iss_height
     %fprintf('Hitrost: %.1f\n', norm(vel));
     %fprintf('Kot: %.1f\n', (angle * 180) / pi);
-    kot = get_angle(pos, angle);
-    fprintf('Kot popravljen: %.1f\n', (kot * 180) / pi);
-    tilt_speed;
-    pos;
+    %kot = get_angle(pos, angle);
+    %fprintf('Kot popravljen: %.1f\n', (kot * 180) / pi);
+    %tilt_speed;
+    %pos;
     %return;
-    tilt_speed = 0.00113;
+    %tilt_speed = 0.00113;
+  %end
+
+  if abs((dist - earth_radius) - iss_height) > 1e4
+    airtime = time;
+    fprintf('Out of orbit!\n');
+    return;
   end
 
   if dist - earth_radius > max_altitude

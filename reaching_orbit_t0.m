@@ -12,15 +12,15 @@ initial_position = [0; earth_radius];
 initial_vel = [0; 0];
 dt = 0.1; % [s] Time step
 simulation_duration = 100000; % [s]
-show_plot = false;
+show_plot = true;
 real_time = false;
 
-%[max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time);
-%return;
+[max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time);
+return;
 
-it = 0
-for tilt_speed = 0.02: 0.000001 : 0.023
-  it += 1
-  [max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time);
-end
+%it = 0
+%for tilt_speed = 0.02: 0.000001 : 0.023
+%  it += 1
+%  [max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot, real_time);
+%end
 

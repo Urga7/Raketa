@@ -42,6 +42,27 @@ top_speed = 0;
 
 while time < simulation_duration
 
+  Y = [pos; vel; fuel; angle];
+  if fuel > 0 && time >= tilt_start_time
+    Y += dt * rocket_derivative(time, [pos; vel; fuel; angle], true, tilt_speed);
+  end
+  if fuel > 0 && time < tilt_start_time
+    Y += dt * rocket_derivative(time, [pos; vel; fuel; angle], true);
+  end
+  if fuel <= 0 && time >= tilt_start_time
+    Y += dt * rocket_derivative(time, [pos; vel; fuel; angle], false, tilt_speed);
+  end
+  if fuel <= 0 && time < tilt_start_time
+    Y += dt * rocket_derivative(time, [pos; vel; fuel; angle], false);
+  end
+
+  pos = [Y(1); Y(2)];
+  vel = [Y(3); Y(4)];
+  fuel = Y(5);
+  angle = Y(6);
+
+  vel = [norm(vel) * sin(angle); norm(vel) * cos(angle)];
+
   dist = sqrt(pos(1)^2 + pos(2)^2);
   if dist < earth_radius
      airtime = time;
@@ -52,40 +73,25 @@ while time < simulation_duration
      return;
   end
 
-  if time >= tilt_start_time
-    angle += tilt_speed * dt;
-  end
-
   if dist - earth_radius > max_altitude
     max_altitude = dist - earth_radius;
   endif
 
-  g_size = (G * earth_mass) / dist^2;
-  g_x = -g_size * (pos(1) / dist);
-  g_y = -g_size * (pos(2) / dist);
-  air_density = base_air_density * (1 / exp((dist - earth_radius) / 8200));
-  drag = -(0.5 * air_density * (sqrt(vel(1)^2 + vel(2)^2) * vel) * cross_section_area * drag_coeficient) / (dry_mass + fuel);
-  accel = drag + [g_x; g_y];
-
-  if fuel > 0
-    thrust = fuel_consumption * fuel_ejection_speed * (1 / (dry_mass + fuel));
-    accel += [thrust * sin(angle); thrust * cos(angle)];
-    fuel -= fuel_consumption * dt;
+  if abs((dist - earth_radius) - iss_height) > 1e5
+    airtime = time;
+    fprintf('Out of orbit!\n');
+    return;
   end
-
-  vel += accel * dt;
-  vel = [norm(vel) * sin(angle); norm(vel) * cos(angle)];
-  pos += vel * dt;
 
   if norm(vel) > top_speed
     top_speed = norm(vel);
   end
 
   if dist - earth_radius >= iss_height
-    airtime = time;
-    fprintf('Kot: %.1f\n', (angle * 180) / pi);
-    fprintf('Hitrost: %.1f\n', vel);
-    return;
+    %airtime = time;
+    %fprintf('Kot: %.1f\n', (angle * 180) / pi);
+    %fprintf('Hitrost: %.1f\n', vel);
+    %return;
   end
 
   if show_plot
