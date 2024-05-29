@@ -1,10 +1,10 @@
 function alpha = get_angle(pos, vel, angle)
 
-A = [pos, pos + vel];
-B = [[0; 0], pos];
-C = intersection(A, B);
+A_len = pos(2);
+B_len = norm(pos);
+C_len = pos(1);
 
-k1 = (B(2) - A(2)) / (B(1) - A(1));
-k2 = (C(2) - A(2)) / (C(1) - A(1));
+cosGamma = (A_len^2+B_len^2-C_len^2) / (2* A_len * B_len);
+gamma = acos(cosGamma);
+alpha = angle - gamma;
 
-alpha = atan(abs((k1 - k2) / (1 + k1 * k2)));
