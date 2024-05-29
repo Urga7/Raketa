@@ -1,4 +1,4 @@
-function [max_altitude, airtime, top_speed] = rocket(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, dt, simulation_duration, show_plot = false, realtime = false)
+function [max_altitude, airtime, top_speed] = rocket(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot = false, realtime = false)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]
@@ -12,11 +12,12 @@ G = 6.67 * 1e-11; % [m^3 / (kg * s^2)]
 earth_mass = 5.97 * 1e24; % [kg]
 earth_radius = 6.37 * 1e6; % [m]
 base_air_density = 1.20; % [kg / m^3] at 20 deg C, sea level.
+iss_height = 408000; % [m]
 
 % INITIAL CONDITIONS:
 time = 0;
-vel = [0; 0];
-pos = [0; earth_radius];
+vel = initial_vel;
+pos = initial_position;
 fuel = fuel_capacity;
 angle = initial_angle; % [rad] (positive = clockwise)
 
@@ -78,6 +79,13 @@ while time < simulation_duration
 
   if norm(vel) > top_speed
     top_speed = norm(vel);
+  end
+
+  if dist - earth_radius >= iss_height
+    airtime = time;
+    fprintf('Kot: %.1f\n', (angle * 180) / pi);
+    fprintf('Hitrost: %.1f\n', vel);
+    return;
   end
 
   if show_plot

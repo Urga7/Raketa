@@ -1,4 +1,4 @@
-function [max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, dt, simulation_duration, show_plot = false, realtime = false)
+function [max_altitude, airtime, top_speed] = rocketRK(fuel_capacity, tilt_start_time, tilt_speed, initial_angle, initial_vel, initial_position, dt, simulation_duration, show_plot = false, realtime = false)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]
@@ -12,11 +12,12 @@ G = 6.67 * 1e-11; % [m^3 / (kg * s^2)]
 earth_mass = 5.97 * 1e24; % [kg]
 earth_radius = 6.37 * 1e6; % [m]
 base_air_density = 1.20; % [kg / m^3] at 20 deg C, sea level_init.
+iss_height = 408000; % [m]
 
 % INITIAL CONDITIONS:
 time = 0;
-vel = [0; 0];
-pos = [0; earth_radius];
+vel = initial_vel;
+pos = initial_position;
 fuel = fuel_capacity;
 angle = initial_angle; % [rad] (positive = clockwise)
 
@@ -42,31 +43,36 @@ top_speed = 0;
 while time < simulation_duration
 
   if fuel > 0 && time >= tilt_start_time
-    k1 = dt*rocket_derivative(time, [pos; vel; fuel], true, true, tilt_speed);
-    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, true, true, tilt_speed);
-    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, true, true, tilt_speed);
-    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, true, true, tilt_speed);
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel; angle], true, tilt_speed);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k1/2, true, tilt_speed);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k2/2, true, tilt_speed);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel; angle] + k3, true, tilt_speed);
   end
   if fuel > 0 && time < tilt_start_time
-    k1 = dt*rocket_derivative(time, [pos; vel; fuel], true);
-    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, true);
-    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, true);
-    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, true);
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel; angle], true);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k1/2, true);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k2/2, true);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel; angle] + k3, true);
   end
-  if fuel <= 0
-    k1 = dt*rocket_derivative(time, [pos; vel; fuel], false);
-    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k1/2, false);
-    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel] + k2/2, false);
-    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel] + k3, false);
+  if fuel <= 0 && time >= tilt_start_time
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel; angle], false, tilt_speed);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k1/2, false, tilt_speed);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k2/2, false, tilt_speed);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel; angle] + k3, false, tilt_speed);
+  end
+  if fuel <= 0 && time < tilt_start_time
+    k1 = dt*rocket_derivative(time, [pos; vel; fuel; angle], false);
+    k2 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k1/2, false);
+    k3 = dt*rocket_derivative(time + dt/2, [pos; vel; fuel; angle] + k2/2, false);
+    k4 = dt*rocket_derivative(time + dt, [pos; vel; fuel; angle] + k3, false);
   end
 
   pos += (k1(1:2) + 2*k2(1:2) + 2*k3(1:2) + k4(1:2)) / 6;
   vel += (k1(3:4) + 2*k2(3:4) + 2*k3(3:4) + k4(3:4)) / 6;
   fuel += (k1(5) + 2*k2(5) + 2*k3(5) + k4(5)) / 6;
+  angle += (k1(6) + 2*k2(6) + 2*k3(6) + k4(6)) / 6;
 
-  if time > tilt_start_time
-    vel = [norm(vel) * sin(tilt_speed * time); norm(vel) * cos(tilt_speed * time)];
-  end
+  vel = [norm(vel) * sin(angle); norm(vel) * cos(angle)];
 
   dist = norm(pos);
   if dist < earth_radius
@@ -78,6 +84,17 @@ while time < simulation_duration
      return;
   end
 
+  if dist - earth_radius >= iss_height
+    fprintf('Hitrost: %.1f\n', norm(vel));
+    fprintf('Kot: %.1f\n', (angle * 180) / pi);
+    kot = get_angle(pos, vel, angle);
+    fprintf('Kot popravljen: %.1f\n', (kot * 180) / pi);
+    tilt_speed
+    pos
+    return;
+    tilt_speed = 0.00113;
+  end
+
   if dist - earth_radius > max_altitude
     max_altitude = dist - earth_radius;
   endif
@@ -87,8 +104,8 @@ while time < simulation_duration
   end
 
   if show_plot
-    set(rocket_plot, 'XData', [pos(1), pos(1) + rocket_length * sin(tilt_speed * time)], ...
-                     'YData', [pos(2), pos(2) + rocket_length * cos(tilt_speed * time)]);
+    set(rocket_plot, 'XData', [pos(1), pos(1) + rocket_length * sin(angle)], ...
+                     'YData', [pos(2), pos(2) + rocket_length * cos(angle)]);
     set(speed_text, 'String', sprintf('Speed: %.2f m/s', norm(vel)));
     drawnow;
   end
