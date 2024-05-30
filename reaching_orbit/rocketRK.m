@@ -26,13 +26,13 @@ if show_plot
   figure;
   hold on;
   axis equal;
-  xlim([-2*earth_radius 2*earth_radius]);
-  ylim([-3*earth_radius 3*earth_radius]);
+  xlim([-1.5*earth_radius 1.5*earth_radius]);
+  ylim([-1.5*earth_radius 1.5*earth_radius]);
   rectangle('Position', [-earth_radius, -earth_radius, 2*earth_radius, 2*earth_radius], 'Curvature', [1, 1], 'FaceColor', [0.8, 0.8, 0.8]);
   rocket_length = 400000;
   rocket_plot = plot([pos(1), pos(1) + rocket_length * sin(angle)], ...
                      [pos(2), pos(2) + rocket_length * cos(angle)], 'b-', 'LineWidth', 2);
-  speed_text = text(-1.6*earth_radius, 1.8*earth_radius, 'Speed: 0 m/s', 'FontSize', 12);
+  speed_text = text(-1.3*earth_radius, 1.3*earth_radius, 'Speed: 0 m/s', 'FontSize', 12);
 end
 
 % RETURN VALUES INITIALISATION

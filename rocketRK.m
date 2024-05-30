@@ -32,7 +32,7 @@ if show_plot
   rocket_length = 400000;
   rocket_plot = plot([pos(1), pos(1) + rocket_length * sin(angle)], ...
                      [pos(2), pos(2) + rocket_length * cos(angle)], 'b-', 'LineWidth', 2);
-  speed_text = text(-1.6*earth_radius, 1.8*earth_radius, 'Speed: 0 m/s', 'FontSize', 12);
+  speed_text = text(-1.3*earth_radius, 1.3*earth_radius, 'Speed: 0 m/s', 'FontSize', 12);
 end
 
 % RETURN VALUES INITIALISATION
