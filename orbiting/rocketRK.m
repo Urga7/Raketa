@@ -26,8 +26,8 @@ if show_plot
   figure;
   hold on;
   axis equal;
-  xlim([-1.5*earth_radius 1.5*earth_radius]);
-  ylim([-1.5*earth_radius 1.5*earth_radius]);
+  xlim([-2*earth_radius 2*earth_radius]);
+  ylim([-3*earth_radius 3*earth_radius]);
   rectangle('Position', [-earth_radius, -earth_radius, 2*earth_radius, 2*earth_radius], 'Curvature', [1, 1], 'FaceColor', [0.8, 0.8, 0.8]);
   rocket_length = 400000;
   rocket_plot = plot([pos(1), pos(1) + rocket_length * sin(angle)], ...
