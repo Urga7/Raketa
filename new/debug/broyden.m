@@ -11,7 +11,7 @@ n = length(x0);
 e = eye(n);
 
 %izberemo korak
-delta = sqrt(tol);
+delta = tol^(1/3);
 
 %pripravimo priblizek za J v x0 (enostranske koncne diference)
 Fx0 = feval(F, x0);
@@ -23,7 +23,7 @@ for k = 1:maxit
 	%poracunamo d = x - x0
 	d = -jac\Fx0;
 	x = x0 + d;
-	
+
   	x(x<0)=0;
 
 	if(norm(d) < tol)

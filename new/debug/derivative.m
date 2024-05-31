@@ -1,4 +1,4 @@
-function [Y_prime] = derivative(t, Y, fuel_capacity = 3000, t0 = 0.906068, omega = 0.012)
+function [Y_prime] = derivative(t, Y, fuel_capacity = 3.0000e+03, t0 = 0, omega = 1.2000e-02)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]
@@ -41,6 +41,5 @@ thrust = [thrust_norm * sin(angle); thrust_norm * cos(angle)];
 accel = drag + g + thrust;
 
 vel = [vel_norm * sin(angle); vel_norm * cos(angle)];
-
 
 Y_prime = [vel; accel];
