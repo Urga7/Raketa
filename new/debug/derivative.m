@@ -1,4 +1,4 @@
-function [Y_prime] = derivative(t, Y, fuel_capacity = 3.0000e+03, t0 = 0, omega = 1.2000e-02)
+function [Y_prime] = derivative(t, Y, fuel_capacity = 3.2315e+03, t0 =  1.0948e+01, omega = 1.4241e-02)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]

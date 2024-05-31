@@ -9,7 +9,7 @@ interval = [t_start, t_end];
 pos_init = [0; earth_radius];
 vel_init = [0; 0];
 Y0 = [pos_init; vel_init];
-dt = 10;
+dt = 0.1;
 
 [t_rk, Y_rk] = rk4(@derivative, interval, Y0, dt);
 %[t_euler, Y_euler] = euler(@derivative, interval, Y0, dt);

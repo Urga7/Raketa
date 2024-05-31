@@ -10,6 +10,7 @@ function y = mapping(x)
 	%CONSTANTS
 	earth_radius = 6.37 * 1e6;
 	iss_height = 408000;
+  mu = 3.986 * 1e14;
 
 	%FIXED PARAMETERS
 	h = 0.1;
@@ -26,7 +27,7 @@ function y = mapping(x)
 
 	%pozenemo Runge-Kutta metodo
 	while(true)
-		t = t + h;
+
 		%poracunamo vrednosti k1, ..., k4 in...
 		k1 = h*f(t, Y, fuel, t0, omega);
 		k2 = h*f(t + h/2, Y + k1/2, fuel, t0, omega);
@@ -42,7 +43,7 @@ function y = mapping(x)
     angle_norm = (get_angle(pos_init, max(0, (t-t0)*omega)));
 
 
-		if pos_norm - earth_radius >= iss_height || pos_norm - earth_radius <= 0 || angle_norm > pi/2
+		if pos_norm - earth_radius >= iss_height || pos_norm - earth_radius < 0 || angle_norm > pi/2
 
         vel = [Y(3); Y(4)];
 		  	vel_norm = norm(vel);
@@ -51,14 +52,25 @@ function y = mapping(x)
       	angle_error = (angle_norm - pi/2)^2;
       	velocity_error = (vel_norm - 7665)^2;
 
+        h = pos(1)*vel(2) - pos(2)*vel(1);
+        e_x = (vel(2)*h) / mu - pos(1)/norm(pos);
+        e_y = -(vel(1)*h) / mu - pos(2)/norm(pos);
+        e_vec = [e_x, e_y];
+
+        eccentricity = norm(e_vec);
+
         %fprintf("%d\n", angle_norm*180/pi)
-      	fprintf("distance error: %d\nangle error: %d\nvelocity error: %d\n\n", distance_error, angle_error, velocity_error);
+        fprintf("fuel: %d\nt0: %d\nomega: %d\n\n", fuel, t0, omega);
+        fprintf("distance: %d\nangle: %d\nvelocity: %d\n-------------\n", pos_norm, rad2deg(angle_norm), vel_norm);
+      	%fprintf("distance error: %d\nangle error: %d\nvelocity error: %d\n\n", distance_error, angle_error, velocity_error);
 
 			   y = [distance_error; angle_error; velocity_error];
 
      		break;
 
+
 		end
+     t = t + h;
 
 	end
 

@@ -19,14 +19,22 @@ for k = 1:(length(t) - 1)
 	k4 = h*f(t(k) + h, Y(:, k) + k3);
 	%... dodamo utezeno povprecje teh vrednosti Y
 	Y(:, k + 1) = Y(:, k) + (k1 + 2*k2 + 2*k3 + k4)/6;
+
   pos = [Y(1, k+1); Y(2, k+1)];
 	pos_norm = norm(pos);
 
 
+  pos = [Y(1, k+1); Y(2, k+1)];
+  pos_norm = norm(pos);
 
-	if pos_norm - 6.37 * 1e6 >= 408000
+  angle_norm = (get_angle(pos, max(0, (t(k+1) - 1.0948e+01)*1.4241e-02)));
+
+
+	if (pos_norm - 6.37e6) >= 408000 || (pos_norm - 6.37e6) < 0 || angle_norm > pi/2
+    pos_norm - 6.37e6
     norm(Y(3:4, k+1))
-    180 * get_angle(pos, max(0, t(k+1) * 0.012)) /pi
+    rad2deg(get_angle(pos, max(0, (t(k+1) - 1.0948e+01) * 1.4241e-02)))
+    return
   end
 
 end
