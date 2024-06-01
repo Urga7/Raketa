@@ -1,4 +1,5 @@
 function x = broyden(x0, F, tol, maxit)
+
 %x = broyden(x0, F, tol, maxit) vrne resitev
 %enacbe F(x) = 0, ki jo poisce z Broydenovo metodo
 %metodo. x0 je zacetni priblizek, F funkcija, tol
@@ -12,9 +13,9 @@ e = eye(n);
 
 %izberemo korak
 delta = sqrt(tol);
-mu = 1;
+mult = 1;
 
-%pripravimo priblizek za J v x0 (enostranske koncne diference)
+%pripravimo priblizek za J v x0 (centralne koncne diference)
 Fx0 = feval(F, x0);
 for j = 1:n
     jac(:, j) = (feval(F, x0 + delta*e(:, j)) - feval(F, x0 - delta*e(:, j))) / (2*delta);
@@ -23,7 +24,7 @@ end
 for k = 1:maxit
 	%poracunamo d = x - x0
 	d = -jac\Fx0;
-  d = mu * d;
+  d = mult * d;
 	x = x0 + d;
 
   x(x<0)=0;
@@ -42,23 +43,28 @@ for k = 1:maxit
   %popravimo priblizek za J (Broydenov popravek ranga 1 v x)
   Fx = feval(F, x);
 
-  if all(abs(Fx) < [1000; 0.01; 0.25])
+  %preverimo konvergenco glede na pričakovane podatke
+  if all(abs(Fx) < [100; 0.01; 0.125])
        break;
   end
 
+  %posodobimo jacobijevo matriko
   dF = Fx - Fx0;
   v = dF - jac * d;
-  denom = v' * d;
-  if abs(denom) > 1e-10
-    jac = jac + (v * v') / denom;
+  denominator = v' * d;
+
+  %če bi delili z zelo majhno stevilko preskocimo in zmanjsamo korak
+  if abs(denominator) > 1e-10
+    jac = jac + (v * v') / denominator;
   else
-    mu = mu / 2;
+    mult = mult / 2;
   end
 
+  %če so podatki bolj ustrezni povečamo korak v nasprotnem primeru zmanjšamo
   if norm(Fx) < norm(Fx0)
-    mu = min(1.5 * mu, 2);
+    mult = min(1.5 * mult, 2.5);
   else
-    mu = 0.5 * mu;
+    mult = mult / 2;
   end
 
 	%nova x0 in Fx0

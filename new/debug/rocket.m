@@ -3,6 +3,7 @@ function [] = rocket()
 %CONSTANTS
 earth_radius = 6.37 * 1e6; % [m]
 
+%FIXED PARAMETERS
 t_start = 0;
 t_end = 500;
 interval = [t_start, t_end];
@@ -11,7 +12,13 @@ vel_init = [0; 0];
 Y0 = [pos_init; vel_init];
 dt = 0.1;
 
-[t_rk, Y_rk] = rk4(@derivative, interval, Y0, dt);
+%STARTING PARAMETERS
+fuel =  3.267704812575065e+03;
+t0 =  1.346834815255444e+01;
+omega = 1.472800380207010e-02;
+param = [fuel, t0, omega];
+
+[t_rk, Y_rk] = rk4(@derivative, interval, Y0, param, dt);
 %[t_euler, Y_euler] = euler(@derivative, interval, Y0, dt);
 
 figure;
