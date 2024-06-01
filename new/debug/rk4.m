@@ -19,10 +19,8 @@ t = interval(1):h:interval(2);
 Y = zeros(length(Y0), length(t));
 Y(:, 1) = Y0;
 
-
 %pozenemo Runge-Kutta metodo
 for k = 1:(length(t) - 1)
-
 
 	%poracunamo vrednosti k1, ..., k4 in...
 	k1 = h*f(t(k), Y(:, k), fuel, t0, omega);
@@ -38,16 +36,12 @@ for k = 1:(length(t) - 1)
   angle_relative = max(0, (t(k+1)-t0)*omega);
 	angle_norm = get_angle(pos, angle_relative);
 
-
 	if abs(pos_norm - earth_radius - iss_height) <= 20 %|| pos_norm - earth_radius < 0 || angle_norm > pi/2
-
-
       rad2deg(angle_norm)
       pos_norm-earth_radius
       norm(Y(3:4,k+1))
       return;
   end
-
 
 end
 

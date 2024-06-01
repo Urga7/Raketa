@@ -5,7 +5,7 @@ earth_radius = 6.37 * 1e6; % [m]
 
 %FIXED PARAMETERS
 t_start = 0;
-t_end = 500;
+t_end = 2000;
 interval = [t_start, t_end];
 pos_init = [0; earth_radius];
 vel_init = [0; 0];
@@ -13,11 +13,12 @@ Y0 = [pos_init; vel_init];
 dt = 0.1;
 
 %STARTING PARAMETERS
-fuel =  3.267704812575065e+03;
-t0 =  1.346834815255444e+01;
-omega = 1.472800380207010e-02;
+fuel =  3268.5;
+t0 =  13.569;
+omega = 0.014743;
 param = [fuel, t0, omega];
 
+format short g;
 [t_rk, Y_rk] = rk4_orbit(@derivative, @derivative_orbit, interval, Y0, param, dt);
 %[t_rk, Y_rk] = rk4(@derivative, interval, Y0, param, dt);
 %[t_euler, Y_euler] = euler(@derivative, interval, Y0, dt);

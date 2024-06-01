@@ -44,7 +44,7 @@ for k = 1:maxit
   Fx = feval(F, x);
 
   %preverimo konvergenco glede na pričakovane podatke
-  if all(abs(Fx) < [100; 0.01; 0.125])
+  if all(abs(Fx) < [10; 0.001; 0.0125])
        break;
   end
 

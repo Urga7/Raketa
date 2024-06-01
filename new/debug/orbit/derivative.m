@@ -1,4 +1,4 @@
-function [Y_prime] = derivative_orbit(t, Y, time_orbit, t0, omega, omega_orbit)
+function [Y_prime] = derivative(t, Y, fuel_capacity = 3.2315e+03, t0 =  1.0948e+01, omega = 1.4241e-02)
 
 % FIXED PARAMETERS:
 dry_mass = 800; % [kg]
@@ -20,7 +20,7 @@ y = Y(2);
 vel_init = [Y(3); Y(4)];
 vel_norm = norm(vel_init);
 
-fuel = 0;
+fuel = max(0, fuel_capacity - t * fuel_consumption);
 mass = dry_mass + fuel;
 
 height = pos_norm - earth_radius;
@@ -31,9 +31,14 @@ r2 = x^2 + y^2;
 g_norm = -((G * earth_mass) / r2);
 g = [g_norm * (x / pos_norm); g_norm * (y / pos_norm)];
 
-angle = max(0, (time_orbit - t0) * omega) + ((t-time_orbit) * omega_orbit);
+thrust_norm = 0;
+if fuel > 0
+  thrust_norm = (fuel_consumption * fuel_ejection_speed) / mass;
+end
+angle = max(0, (t - t0) * omega);
+thrust = [thrust_norm * sin(angle); thrust_norm * cos(angle)];
 
-accel = drag + g;
+accel = drag + g + thrust;
 
 vel = [vel_norm * sin(angle); vel_norm * cos(angle)];
 
