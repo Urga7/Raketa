@@ -20,3 +20,4 @@ for k = 1:(length(t) - 1)
 	%... dodamo utezeno povprecje teh vrednosti Y
 	Y(:, k + 1) = Y(:, k) + (k1 + 2*k2 + 2*k3 + k4)/6;
 end
+

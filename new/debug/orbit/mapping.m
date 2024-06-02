@@ -11,7 +11,7 @@ earth_radius = 6.37 * 1e6; % [m]
 iss_height = 408000; % [m]
 
 %FIXED PARAMETERS
-h = 0.01;
+h = 0.1;
 
 %fukncija mapping(x) resi DE
 %Y' = f(t, Y) pri zacetnem pogoju Y(t=0) = Y0 in zacetnimi parametri x
@@ -49,7 +49,7 @@ while(true)
 
 		distance_error = (pos_norm-(earth_radius+iss_height))^2;
 		angle_error = (angle_norm - pi/2)^2;
-		velocity_error = (vel_norm - 7664.9)^2;
+		velocity_error = (vel_norm - 7668)^2;
 
 
 		fprintf("fuel: %d\nt0: %d\nomega: %d\n\n", fuel, t0, omega);

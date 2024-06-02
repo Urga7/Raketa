@@ -1,4 +1,4 @@
-function [] = rocket()
+function [] = rocket_orbiting()
 
 %CONSTANTS
 earth_radius = 6.37 * 1e6; % [m]
@@ -7,19 +7,19 @@ earth_radius = 6.37 * 1e6; % [m]
 t_start = 0;
 t_end = 2000;
 interval = [t_start, t_end];
-pos_init = [0; earth_radius];
-vel_init = [0; 0];
+pos_init = [ 5.4347e+05; 6.7562e+06];
+vel_init = [2726.5;7163.7];
 Y0 = [pos_init; vel_init];
-dt = 0.01;
+dt = 0.1;
 
 %STARTING PARAMETERS
-fuel =  3267.9;
-t0 =  13.06;
-omega = 0.0146417;
+fuel =  0;
+t0 =  0;
+omega = 0.0147425;
 param = [fuel, t0, omega];
 
 format short g;
-%mapping(param)
+mapping(param)
 [t_rk, Y_rk] = rk4_orbit_jit(@derivative, @derivative_orbit, interval, Y0, param, dt);
 %[t_rk, Y_rk] = rk4(@derivative, interval, Y0, param, dt);
 %[t_euler, Y_euler] = euler(@derivative, interval, Y0, dt);

@@ -20,8 +20,8 @@ y = Y(2);
 vel_init = [Y(3); Y(4)];
 vel_norm = norm(vel_init);
 
-fuel = 0;
-mass = dry_mass + fuel;
+
+mass = dry_mass;
 r2 = x^2 + y^2;
 g_norm = -((G * earth_mass) / r2);
 g = [g_norm * (x / pos_norm); g_norm * (y / pos_norm)];

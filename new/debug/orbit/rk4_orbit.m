@@ -53,7 +53,7 @@ for k = 1:(length(t) - 1)
   angle_relative = max(0, (t(k + 1)-t0)*omega);
 	angle_norm = get_angle(pos, angle_relative);
 
-	if !in_orbit && abs(pos_norm - earth_radius - iss_height) <= 10
+	if !in_orbit && (pos_norm - earth_radius - iss_height) <= 0
       %rad2deg(angle_norm)
       vel = norm(Y(3:4,k+1));
       omega_orbit = vel / pos_norm;

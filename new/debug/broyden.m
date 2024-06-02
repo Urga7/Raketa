@@ -12,7 +12,7 @@ n = length(x0);
 e = eye(n);
 
 %izberemo korak
-delta = sqrt(tol);
+delta = (sqrt(tol));
 mult = 1;
 
 %pripravimo priblizek za J v x0 (centralne koncne diference)
@@ -44,7 +44,7 @@ for k = 1:maxit
   Fx = feval(F, x);
 
   %preverimo konvergenco glede na pričakovane podatke
-  if all(abs(Fx) < [10; 0.001; 0.0125])
+  if all(abs(Fx) < [4; 8e-5 ; 0.25])
        break;
   end
 
@@ -66,6 +66,8 @@ for k = 1:maxit
   else
     mult = mult / 2;
   end
+
+
 
 	%nova x0 in Fx0
 	x0 = x;
