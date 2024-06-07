@@ -11,15 +11,15 @@ earth_radius = 6.37 * 1e6; % [m]
 iss_height = 408000; % [m]
 
 %FIXED PARAMETERS
-h = 0.01;
+h = 0.1;
 
 %fukncija mapping(x) resi DE
 %Y' = f(t, Y) pri zacetnem pogoju Y(t=0) = Y0 in zacetnimi parametri x
 %s standardno Runge-Kutta metodo 4. reda s korakom h na intervalu [t=0, t=k].
 
 %pripravimo vrednosti Y
-pos_init = [0;earth_radius];
-vel_init = [0;0];
+pos_init = [0; earth_radius];
+vel_init = [0; 0];
 Y = [pos_init; vel_init];
 t = 0;
 
@@ -38,8 +38,8 @@ while(true)
 	pos = [Y(1); Y(2)];
 	pos_norm = norm(pos);
 
-	angle_relative = max(0, (t-t0)*omega);
-	angle_norm = get_angle(pos, angle_relative);
+	angle = max(0, (t-t0)*omega);
+	angle_norm = get_angle(pos, angle);
 
 	%preverimo ce je raketa prisla do ISS, ce je strmoglavila ali ce se je zacela obracati proti zemlji
 	if pos_norm - earth_radius >= iss_height || pos_norm - earth_radius < 0 || angle_norm > pi/2

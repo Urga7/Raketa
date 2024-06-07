@@ -28,10 +28,10 @@ while(t < interval(2))
 
 	%poracunamo vrednosti k1, ..., k4 in...
   if in_orbit
-    k1 = h*f_orbit(t, Y, time_orbit, t0, omega, omega_orbit);
-	  k2 = h*f_orbit(t + h/2, Y + k1/2, time_orbit, t0, omega, omega_orbit);
-	  k3 = h*f_orbit(t + h/2, Y + k2/2, time_orbit, t0, omega, omega_orbit);
-	  k4 = h*f_orbit(t + h, Y + k3, time_orbit, t0, omega, omega_orbit);
+    k1 = h*f_orbit(t, Y);
+	  k2 = h*f_orbit(t + h/2, Y + k1/2);
+	  k3 = h*f_orbit(t + h/2, Y + k2/2);
+	  k4 = h*f_orbit(t + h, Y + k3);
   else
     k1 = h*f(t, Y, fuel, t0, omega);
 	  k2 = h*f(t + h/2, Y + k1/2, fuel, t0, omega);
@@ -47,11 +47,8 @@ while(t < interval(2))
 	  trajectory(:, k + 1) = Y;
   end
 
-
-
   pos = [Y(1); Y(2)];
 	pos_norm = norm(pos);
-
 
   angle_relative = max(0, (t-t0)*omega);
 	angle_norm = get_angle(pos, angle_relative);

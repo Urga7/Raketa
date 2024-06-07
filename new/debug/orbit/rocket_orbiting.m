@@ -10,7 +10,7 @@ interval = [t_start, t_end];
 pos_init = [ 5.4347e+05; 6.7562e+06];
 vel_init = [2726.5;7163.7];
 Y0 = [pos_init; vel_init];
-dt = 0.1;
+dt = 0.01;
 
 %STARTING PARAMETERS
 fuel =  0;
@@ -19,8 +19,8 @@ omega = 0.0147425;
 param = [fuel, t0, omega];
 
 format short g;
-mapping(param)
-[t_rk, Y_rk] = rk4_orbit_jit(@derivative, @derivative_orbit, interval, Y0, param, dt);
+%mapping(param);
+[t_rk, Y_rk] = rk4_orbit(@derivative, @derivative_orbit, interval, Y0, param, dt);
 %[t_rk, Y_rk] = rk4(@derivative, interval, Y0, param, dt);
 %[t_euler, Y_euler] = euler(@derivative, interval, Y0, dt);
 
