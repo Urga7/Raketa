@@ -24,12 +24,6 @@ r2 = x^2 + y^2;
 g_norm = -((G * earth_mass) / r2);
 g = [g_norm * (x / pos_norm); g_norm * (y / pos_norm)];
 
-%angle = max(0, pi/2 + ((t - time_orbit) * 0.0011314));
-%angle = max(0, (time_orbit - t0) * omega) + ((t - time_orbit) * omega_orbit);
-%rad2deg(get_angle([x; y], angle));
-
 accel = g;
-
-%vel = [vel_norm * sin(angle); vel_norm * cos(angle)];
 
 Y_prime = [vel_init; accel];
