@@ -1,5 +1,5 @@
 function x = broyden(x0, F, tol, maxit)
-%x = broyden(x0, F, tol, maxit) return the solution
+%x = broyden(x0, F, tol, maxit) returns the solution
 %to the equation F(x) = 0, which it finds using the Broyden's method.
 %x0 is the initial guess, F is the function, tol is the tolerance and
 %maxit is the maximum number of iterations allowed.
