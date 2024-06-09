@@ -1,0 +1,8 @@
+Mapa '01_Simulation':
+Zaženite skripto 'rocket.m'. Parametre lahko nastavite sami. Skripta bo izrisala trajektorijo rakete.
+
+Mapa '02_Finding_parameters':
+Zaženite skripto 'run_broyden.m'. Skripta bo začela iskati parametre za vzelt do orbite z Broydenovo metodo.
+
+Mapa '03_Rk4_vs_euler_orbit':
+Zaženite skripto 'rocket_orbit.m'. Skripta bo izrisala orbitalne trajetorije rakete, izračunane z rk4 in eulerjevo metodo.
